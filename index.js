@@ -6,6 +6,8 @@ app.use(express.json())
 const cors = require('cors')
 app.use(cors())
 
+app.use(express.static('dist'))
+
 let notes = [
     {    id: "1",    content: "HTML is hard",    important: true  },
     {    id: "2",    content: "Browser can execute only JavaScript",    important: false  },
