@@ -10,14 +10,8 @@ app.use(express.static('dist'))
 
 const mongoose = require('mongoose')
 
-if(process.argv.length < 3){
-    console.log('give password as argument')
-    process.exit(1)
-}
-
-const password = process.argv[2]
-
-const url = `mongodb+srv://ac2255:${password}@fullstack.julv8.mongodb.net/noteApp?retryWrites=true&w=majority&appName=FullStack`
+require('dotenv').config();
+const url = process.env.MONGODB_URI;
 
 mongoose.set('strictQuery', false)
 
@@ -26,6 +20,14 @@ mongoose.connect(url)
 const noteSchema = new mongoose.Schema({
     content: String,
     important: Boolean,
+})
+
+noteSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
 })
 
 const Note = mongoose.model('Note', noteSchema)
@@ -41,7 +43,9 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/notes', (request, response) => {
-    response.json(notes)
+    Note.find({}).then(notes => {
+        response.json(notes)
+    })
 })
 
 app.get('/api/notes/:id', (request, response) => {
