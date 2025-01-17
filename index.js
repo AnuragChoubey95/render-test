@@ -8,6 +8,28 @@ app.use(cors())
 
 app.use(express.static('dist'))
 
+const mongoose = require('mongoose')
+
+if(process.argv.length < 3){
+    console.log('give password as argument')
+    process.exit(1)
+}
+
+const password = process.argv[2]
+
+const url = `mongodb+srv://ac2255:${password}@fullstack.julv8.mongodb.net/noteApp?retryWrites=true&w=majority&appName=FullStack`
+
+mongoose.set('strictQuery', false)
+
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+    content: String,
+    important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
+
 let notes = [
     {    id: "1",    content: "HTML is hard",    important: true  },
     {    id: "2",    content: "Browser can execute only JavaScript",    important: false  },
