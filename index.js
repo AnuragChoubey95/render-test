@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express')
 
 const app = express()
@@ -6,31 +8,9 @@ app.use(express.json())
 const cors = require('cors')
 app.use(cors())
 
-app.use(express.static('dist'))
+app.use(express.static('dist')) //Whats this?
 
-const mongoose = require('mongoose')
-
-require('dotenv').config();
-const url = process.env.MONGODB_URI;
-
-mongoose.set('strictQuery', false)
-
-mongoose.connect(url)
-
-const noteSchema = new mongoose.Schema({
-    content: String,
-    important: Boolean,
-})
-
-noteSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString()
-        delete returnedObject._id
-        delete returnedObject.__v
-    }
-})
-
-const Note = mongoose.model('Note', noteSchema)
+const Note = require('./models/note')
 
 let notes = [
     {    id: "1",    content: "HTML is hard",    important: true  },
